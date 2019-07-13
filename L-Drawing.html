@@ -20,11 +20,13 @@
 					{"sorgente":6,"destinazione":2},
 					{"sorgente":5,"destinazione":1}];
 	Node_Graph=[1,2,3,4,5,6];
-	Node_coordinates =[{"cx":100,"cy":500},{"cx":250,"cy":600},{"cx":350,"cy":400},{"cx":500,"cy":300},{"cx":900,"cy":100},{"cx":700,"cy":800}];
+	//Node_coordinates =[{"cx":100,"cy":500},{"cx":250,"cy":600},{"cx":350,"cy":400},{"cx":500,"cy":300},{"cx":900,"cy":100},{"cx":700,"cy":800}];
+	var Node_coordinates = []
 	//diametro nodi
-	var diametro_nodi=20;
+	var diametro_nodi=10;
 	var larghezza_bordo = 1000;
 	var altezza_bordo = 1000;
+	var offset = 100;
 	var bodySelection = d3.select ( "body" );
 
 	var svgSelection = bodySelection.append("svg")
@@ -40,23 +42,23 @@
 	}
 	//disegno nodi in ordine dell'array Node_Graph
 	var NodeData =[];
-	/*
+	
 	var xAlreadyUsed = [];
 	var yAlreadyUsed = [];
 	for (var i = 0; i < Node_Graph.length; i++) {
-		randomX = Math.floor(Math.random()*1000)
-		while(!isInRange(xAlreadyUsed,randomX,50)|| randomX<=diametro_nodi ||randomX>=(larghezza_bordo-diametro_nodi)){
-			randomX = Math.floor(Math.random()*1000)
+		randomX = Math.floor(Math.random()*(larghezza_bordo-offset))
+		while(!isInRange(xAlreadyUsed,randomX,50)|| randomX<=diametro_nodi ||randomX>=(larghezza_bordo-diametro_nodi) || randomX < offset){
+			randomX = Math.floor(Math.random()*(larghezza_bordo-offset))
 		}
 		xAlreadyUsed.push(randomX)
 
-		randomY = Math.floor(Math.random()*1000)
-		while(!isInRange(yAlreadyUsed,randomY,50)|| randomY<=diametro_nodi || randomY>=(altezza_bordo-diametro_nodi)){
-			randomY = Math.floor(Math.random()*1000)
+		randomY = Math.floor(Math.random()*(altezza_bordo-offset))
+		while(!isInRange(yAlreadyUsed,randomY,50)|| randomY<=diametro_nodi || randomY>=(altezza_bordo-diametro_nodi) || randomY < offset){
+			randomY = Math.floor(Math.random()*(altezza_bordo-offset))
 		}
 		yAlreadyUsed.push(randomY)
 		NodeData.push({"cx": randomX, "cy": randomY, "radius": diametro_nodi, "color" : "green", "id":Node_Graph[i]});
-	}*/
+	}
 	for(var i=0;i< Node_coordinates.length;i++){
 		NodeData.push({"cx": Node_coordinates[i].cx, "cy": Node_coordinates[i].cy, "radius": diametro_nodi, "color" : "green", "id":Node_Graph[i]});
 	}
