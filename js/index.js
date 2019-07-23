@@ -2754,7 +2754,7 @@
 	"Vegetarian"	];
 
 	var margin = {top: 110, right: 100, bottom: 100, left: 100},
-	width = 800,
+	width = 800;
 	height = 390;
 
 	var svg = d3.select("#chart").append("svg")
@@ -2902,15 +2902,14 @@
 	
 	//crea il grafo a partire da result che è l'output della funzione setAreaAndCategory
 	function update(result){
-	var british_meals = result[0];
+	var selected_meals = result[0];
 	var ingredients = result[1];
 	var Edge_Graph = result[2]
 
 	//diametro nodi
 	var diametro_nodi=10;
-	var larghezza_bordo = 800;
-	var altezza_bordo = 400;
-	var offset = 2;
+	var larghezza_bordo = 990;
+	var altezza_bordo = 990;
 	var bodySelection = d3.select ( "#chart" );
 
 	var svgSelection = bodySelection.append("svg")
@@ -2930,26 +2929,41 @@
 	
 	var xAlreadyUsed = [];
 	var yAlreadyUsed = [];
-
-	for (var i = 0; i < british_meals.length; i++) {
-		randomX = Math.floor(Math.random()*(larghezza_bordo-offset))
-		xAlreadyUsed.push(randomX)
-
-		randomY = Math.floor(Math.random()*(altezza_bordo-offset))
-		yAlreadyUsed.push(randomY)
-		NodeData.push({"cx": randomX, "cy": randomY, "radius": diametro_nodi, "color" : "red", "id":british_meals[i]});
+	var len_selected_meals = selected_meals.length;
+	var len_selected_ingredients = ingredients.length;
+	var spacing;
+	// la spaziatura tra nodi è determinata in base al rapporto tra ingredienti e piatti selezionati
+	if (len_selected_meals >len_selected_ingredients/4){
+		spacing = 330/len_selected_meals;
+	}
+	else{
+		spacing = 330/(len_selected_ingredients/4)
 	}
 
+	for (var i = 0; i < selected_meals.length; i++) {
+		startX = 330;
+		startY = 660;
+		NodeData.push({"cx": startX+(i*spacing), "cy": startY-(i*spacing), "radius": diametro_nodi, "color" : "red", "id":selected_meals[i]});
+	}
+
+	var indexToSplit = ingredients.length/2;
+	var first_ingredients_list = ingredients.slice(0, indexToSplit);
+	var second_ingredients_list = ingredients.slice(indexToSplit + 1)
 	//disegno nodi in ordine dell'array ingredients
-	for (var i = 0; i < ingredients.length; i++) {
-		randomX = Math.floor(Math.random()*(larghezza_bordo-offset))
-		
-		xAlreadyUsed.push(randomX)
+	for (var i = 0; i < first_ingredients_list.length; i++) {
+		let startX_prima_diagonale = 15;
+		let startY_prima_diagonale = 600;
+		//in questo caso ingredienti e nodi non devo condividere l'ordinata
+	    NodeData.push({"cx": startX_prima_diagonale+(i*spacing), "cy": startY_prima_diagonale-(i*spacing-3), "radius": diametro_nodi, "color" : "blue", "id":ingredients[i]});
 
-		randomY = Math.floor(Math.random()*(altezza_bordo-offset))
-		yAlreadyUsed.push(randomY)
-		NodeData.push({"cx": randomX, "cy": randomY, "radius": diametro_nodi, "color" : "blue", "id":ingredients[i]});
 	}
+	for (var i=0; i<second_ingredients_list.length;i++){
+		let startX_seconda_diagonale = 300;
+		let startY_seconda_diagonale = 980;
+		//in questo caso devo far sì che ingredienti e nodi non condividano la ascissa
+		NodeData.push({"cx": startX_seconda_diagonale+(i*spacing-3), "cy": startY_seconda_diagonale-(i*spacing), "radius": diametro_nodi, "color" : "blue", "id":ingredients[i]});
+	}
+	console.log(NodeData.length)
 
 	var circles = svgSelection.selectAll("circle")
     						.data(NodeData)
@@ -2981,8 +2995,6 @@
 	var SegmentData = [];
 	
 	var PuntiRaccordo = new Array();
-	
-	var cx=parseInt(sorgente[0].cx, 10)+10;
 	
 	var PolygonData = [];
 
