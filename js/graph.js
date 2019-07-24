@@ -2678,20 +2678,6 @@
 	}
 	]
 
-	/* Se vuoi caricare i dati da file json esterno utilizzare questo comando al posto del precedente.
-	Attenzione!!! I browser bloccano il caricamento dei dati da dile esterni, pertanto potrebbero esserci problemi nel caricamento
-	In windows, andare nella cartella del progetto ed eseguire: "python -m http.server [porta]" (python deve essere installato). Quindi andare
-	sul browser e digitare: localhost:porta
-
-	var dataset = d3.json("meals.json").then((data) => {
-	return data;
-	}*/
-
-	/* restituisce un array in cui:
-	- nella prima posizione c'è l'elenco dei piatti (nodi_piatto);
-	- nella seconda psizione c'è l'elenco degli ingredienti (nodi_ingredienti);
-	- nella terza posizione c'è un struttura JSON per gli archi piatti-ingredienti (edge_graph) del tipo 
-	  {"sorgente": "nome_piatto", "destinazione": "nome_ingrediente"}; */
 	function setAreaAndCategory(area, category){
 		var piatto;
 		var nodi_piatto = [];
@@ -2724,174 +2710,103 @@
 		//	console.log(result);
 	}
 
+
+
+	//prendo i dati dall'altra pagina html
+	var queryString = decodeURIComponent(window.location.search);
+	queryString = queryString.substring(1);
+	var queries = queryString.split("&");
+	var area = (queries[0].split("="))[1];
+	var category = (queries[1].split("="))[1];
+
+	//titolo dinamico
+	d3.select(".title").html("Grafo "+area +"-"+category);
+
+	//mi genero il filtro dal dataset
+	var result = setAreaAndCategory(area,category);
+
+	//crea il grafo a partire da result che è l'output della funzione setAreaAndCategory
+	var selected_meals = result[0];
+	var ingredients = result[1];
+	var Edge_Graph = result[2]
+
+	//diametro nodi
+	var diametro_nodi=10;
+	var larghezza_bordo = 990;
+	var altezza_bordo = 990;
+	var bodySelection = d3.select ("#chart2");
+
+	var svgSelection = bodySelection.append("svg")
+		.attr("width", larghezza_bordo)
+ 		.attr("height", altezza_bordo)
+		.style("border", "1px solid black");
 	
-	var areas =[
-	"American",
-	"British",
-	"Chinese",
-	"French",
-	"Greek",
-	"Indian",
-	"Italian",
-	"Japanese",
-	"Mexican",
-	"Spanish",
-	"Thai"];
-
-	var categories = [
-	"Beef", 
-	"Breakfast", 
-	"Chicken", 
-	"Desert", 
-	"Lamb", 
-	"Miscellaneous", 	
-	"Pasta", 
-	"Pork", 
-	"Seafood", 
-	"Side", 
-	"Starter", 
-	"Vegan", 
-	"Vegetarian"	];
-
-	var margin = {top: 115, right: 100, bottom: 100, left: 100},
-	width = 800;
-	height = 350;
-
-	var svg = d3.select("#chart1").append("svg")
-	.attr("width", width + margin.left + margin.right)
-	.attr("height", height + margin.top + margin.bottom)
-	.style("margin-left", -margin.left + "px")
-	.append("g")
-	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-	svg.append("rect")
-	.attr("class", "background")
-	.attr("width", width)
-	.attr("height", height);
-
-	var numrows = areas.length;
-	var numcols = categories.length;
-
-	var matrix = new Array(numrows);
-	for (var i = 0; i < numrows; i++) {
-	matrix[i] = new Array(numrows);
-	for (var j = 0; j < numcols; j++) {
-	matrix[i][j] = Math.random()*2 - 1;
+	
+		//disegno nodi in ordine dell'array areas
+	var NodeData =[];
+	
+	var xAlreadyUsed = [];
+	var yAlreadyUsed = [];
+	var len_selected_meals = selected_meals.length;
+	var len_selected_ingredients = ingredients.length;
+	var spacing;
+	// la spaziatura tra nodi è determinata in base al rapporto tra ingredienti e piatti selezionati
+	if (len_selected_meals >len_selected_ingredients/4){
+		spacing = 330/len_selected_meals;
 	}
+	else{
+		spacing = 330/(len_selected_ingredients/4)
 	}
 
-	var x = d3.scale.ordinal()
-	.domain(d3.range(numcols))
-	.rangeBands([0, width]);
-
-	var y = d3.scale.ordinal()
-	.domain(d3.range(numrows))
-	.rangeBands([0, height]);
-
-	var rowLabels = new Array(numrows);
-	for (var i = 0; i < numrows; i++) {
-	rowLabels[i] = areas[i];
+	for (var i = 0; i < selected_meals.length; i++) {
+		startX = 330;
+		startY = 660;
+		NodeData.push({"cx": startX+(i*spacing), "cy": startY-(i*spacing), "radius": diametro_nodi, "color" : "red", "id":selected_meals[i]});
 	}
 
-	var columnLabels = new Array(numcols);
-	for (var i = 0; i < numcols; i++) {
-	columnLabels[i] = categories[i];
+	var indexToSplit = ingredients.length/2;
+	var first_ingredients_list = ingredients.slice(0, indexToSplit);
+	var second_ingredients_list = ingredients.slice(indexToSplit)
+	//disegno nodi in ordine dell'array ingredients
+	for (var i = 0; i < first_ingredients_list.length; i++) {
+		let startX_prima_diagonale = 15;
+		let startY_prima_diagonale = 600;
+		//in questo caso ingredienti e nodi non devo condividere l'ordinata
+	    NodeData.push({"cx": startX_prima_diagonale+(i*spacing), "cy": startY_prima_diagonale-(i*spacing-3), "radius": diametro_nodi, "color" : "blue", "id":first_ingredients_list[i]});
+
 	}
-
-	var colorMap = d3.scale.linear()
-	.domain([-1, 0, 1])
-	//.range(["red", "white", "blue"]);    
-	.range(["brown", "#ddd", "darkgreen"]);
-
-	var row = svg.selectAll(".row")
-	.data(matrix)
-	.enter().append("g")
-	.attr("class", "row")
-	.attr("transform", function(d, i) { return "translate(0," + y(i) + ")"; });
-
-	var cell = row.selectAll(".cell")
-	.data(function(d) { return d; })
-	.enter().append("rect")
-	.attr("class", "cell")
-	.attr("x", function(d, i) { return x(i); })
-	.attr("width", x.rangeBand())
-	.attr("height", y.rangeBand())
-	.style("stroke-width", 4)
-
-	row.append("line")
-	.attr("x2", width);
-
-	row.append("text")
-	.attr("x", -3)
-	.attr("y", y.rangeBand() / 2)
-	.attr("dy", ".32em")
-	.attr("text-anchor", "end")
-	.attr("font-weight",600)
-	.text(function(d, i) { return areas[i]; });
-
-	var column = svg.selectAll(".column")
-	.data(columnLabels)
-	.enter().append("g")
-	.attr("class", "column")
-	.attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
-
-	column.append("line")
-	.attr("x1", -width);
-
-	column.append("text")
-	.attr("x", 3)
-	.attr("y", x.rangeBand() / 2)
-	.attr("dy", ".32em")
-	.attr("text-anchor", "start")
-	.attr("font-weight",600)
-	.text(function(d, i) { return d; });
+	for (var i=0; i<second_ingredients_list.length;i++){
+		let startX_seconda_diagonale = 300;
+		let startY_seconda_diagonale = 980;
+		//in questo caso devo far sì che ingredienti e nodi non condividano la ascissa
+		NodeData.push({"cx": startX_seconda_diagonale+(i*spacing-3), "cy": startY_seconda_diagonale-(i*spacing), "radius": diametro_nodi, "color" : "blue", "id":second_ingredients_list[i]});
+	}
+	//console.log(NodeData.length)
 
 	// define tooltip
-	var tooltip = d3.select('#chart1') 
-	.append('div')                                   
-	.attr('class', 'tooltip'); 
+	// create a tooltip
+    var new_tooltip = d3.select("#chart2")
+      .append("div")
+      .attr("class", "tooltip")
 
-	tooltip.append('div')                           
-	.attr('class', 'area');                        
-	tooltip.append('div')                   
-	.attr('class', 'categoria');   
-	tooltip.append('div')                   
-	.attr('class', 'piatti');
-	tooltip.append('div')                   
-	.attr('class', 'ingredienti');                     
-	
-	row.selectAll(".cell")
-	.data(function(d, i) { return matrix[i]; })
-	.style("fill", colorMap)
-	.on('click', function(d,i,j) {
-		var category = categories[i];
-		var area = areas[j];
-		var result = setAreaAndCategory(area, category);
-		if(result[0].length>0 && result[1].length>0){
-			var value1=area;
-			var value2=category;
-			var queryString = "?para1=" + value1 + "&para2=" + value2;
-			//window.location.href = "graph.html" + queryString;
-			window.open("C:/Users/simpe/Downloads/Progetto-InfoVis-A.A.-2018-2019-master/graph.html"+queryString,"_blank");
-		}
-		else alert("Attenzione: hai selezionato un filtro in cui non sono presenti nè piatti nè ingredienti!");
-
-	})
-	.on('mouseover', function(d,i,j){
-	var res = setAreaAndCategory(areas[j], categories[i]);
-	var piat = res[0].length + "";                                             
-	var ing = res[1].length + "";                                             
-	tooltip.select('.area').html('Area: '+areas[j].bold());        
-	tooltip.select('.categoria').html('Categoria: '+categories[i].bold());    
-	tooltip.select('.piatti').html('Piatti: '+piat.bold());    
-	tooltip.select('.ingredienti').html('Ingredienti: '+ing.bold());    
-	tooltip.style('display', 'block');                    
+    new_tooltip.append('div')                           
+	.attr('class', 'descr');   
+            
+	var circles = 
+	svgSelection.selectAll(".circle")
+	.data(NodeData)
+	.enter()
+	.append("circle")
+	.attr("class","circle")
+	.on('mouseover', function(d){                          
+		new_tooltip.select('.descr').html(d.id.bold());        
+		new_tooltip.style('display', 'block');                    
 	})
 	.on('mouseout', function() {                     
-	tooltip.style('display', 'none'); 
+	new_tooltip.style('display', 'none'); 
 	})
 	.on('mousemove', function(d) { 
-	tooltip.style('top', (d3.event.layerY + 10) + 'px') 
+	new_tooltip.style('top', (d3.event.layerY + 10) + 'px') 
 	.style('left', (d3.event.layerX + 10) + 'px'); 
 	})
 	.on("mouseenter", function(d) {
@@ -2902,11 +2817,182 @@
 	})
 	.on("mouseleave", function(d) {
     d3.select(this).transition()            
-       .attr("d", cell)
+       .attr("d", d)
        .attr("stroke","none");
 	})
-		
-		
-	
-	
 
+   	var circleAttributes = circles
+							.attr("id", function (d) { return d.id; })
+ 							.attr("cx", function (d) { return d.cx; })
+ 							.attr("cy", function (d) { return d.cy; })
+ 							.attr("r", function (d) { return d.radius; })
+ 							.style("fill", function (d) { return d.color; })
+
+
+	//disegno archi
+	var sorgente=[];
+	var destinazione=[];
+	var circles=document.getElementsByTagName("circle");
+	for (var j = 0; j < Edge_Graph.length; j++) {
+		for (var i = 0; i < (circles.length); i++) {
+			if (circles[i].getAttribute("id")==Edge_Graph[j].sorgente){
+				sorgente.push({"id":circles[i].getAttribute("id"),"cx":circles[i].getAttribute("cx"),"cy":circles[i].getAttribute("cy")});
+			}
+			if (circles[i].getAttribute("id")==Edge_Graph[j].destinazione){
+				destinazione.push({"id":circles[i].getAttribute("id"),"cx":circles[i].getAttribute("cx"),"cy":circles[i].getAttribute("cy")});
+			}
+		}
+	}	
+
+	var SegmentData = [];
+	
+	var PuntiRaccordo = new Array();
+	
+	var PolygonData = [];
+
+	for (var i = 0; i < sorgente.length; i++) {
+		//se nodo sorgente è minore del nodo destinazione
+		if ((sorgente[i].cx < destinazione[i].cx) && (sorgente[i].cy < destinazione[i].cy)){
+			SegmentData.push({"x1":parseInt(sorgente[i].cx,10),"y1":parseInt(sorgente[i].cy,10)+diametro_nodi,"x2":(sorgente[i].cx),"y2":parseInt(destinazione[i].cy,10)-diametro_nodi});
+			SegmentData.push({"x1":parseInt(sorgente[i].cx,10)+diametro_nodi,"y1":destinazione[i].cy,"x2":parseInt(destinazione[i].cx,10)-diametro_nodi,"y2":destinazione[i].cy});
+			PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10),"y":parseInt(destinazione[i].cy,10)-diametro_nodi});
+			PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10),"y":parseInt(destinazione[i].cy,10)});
+			PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10)+diametro_nodi,"y":parseInt(destinazione[i].cy,10)});
+			
+			//attributi frecce
+			var puntiFreccia = ((parseInt(destinazione[i].cx)-diametro_nodi-10).toString())+","+((parseInt(destinazione[i].cy)-5).toString())+" "+
+							   ((parseInt(destinazione[i].cx)-diametro_nodi-10).toString())+","+((parseInt(destinazione[i].cy)+5).toString())+" "+
+							   ((parseInt(destinazione[i].cx)-diametro_nodi).toString())+","+((parseInt(destinazione[i].cy)).toString())+" ";
+			PolygonData.push({ "fill":  "black", "stroke": "black" ,"stroke-width":"0.5", "points": puntiFreccia})
+			
+			//curve di raccordo
+			var lineFunction = d3.svg.line()
+		 							.x(function(d) { return d.x; })
+									.y(function(d) { return d.y; })
+									.interpolate("basis");
+			//The line SVG Path we draw
+			var lineGraph = svgSelection.append("path")
+		                        .attr("d", lineFunction(PuntiRaccordo))
+		                        .attr("stroke", "black")
+		                        .attr("stroke-width", 0.5)
+		                        .attr("fill", "none");
+			//svuoto array dei punti per la creazione delle curve di controllo
+			PuntiRaccordo.pop();
+			PuntiRaccordo.pop();
+			PuntiRaccordo.pop();
+		}
+		
+		//se nodo sorgente è maggiore del nodo destinazione
+		if ((sorgente[i].cx > destinazione[i].cx) && (sorgente[i].cy > destinazione[i].cy)){
+			SegmentData.push({"x1":parseInt(sorgente[i].cx,10),"y1":parseInt(sorgente[i].cy,10)-diametro_nodi,"x2":(sorgente[i].cx),"y2":parseInt(destinazione[i].cy,10)+diametro_nodi});
+			SegmentData.push({"x1":parseInt(sorgente[i].cx,10)-diametro_nodi,"y1":destinazione[i].cy,"x2":parseInt(destinazione[i].cx,10)+diametro_nodi,"y2":destinazione[i].cy});
+			PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10),"y":parseInt(destinazione[i].cy,10)+diametro_nodi});
+			PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10),"y":parseInt(destinazione[i].cy,10)});
+			PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10)-diametro_nodi,"y":parseInt(destinazione[i].cy,10)});
+			
+			//attributi frecce
+			var puntiFreccia = ((parseInt(destinazione[i].cx)+diametro_nodi+10).toString())+","+((parseInt(destinazione[i].cy)-5).toString())+" "+
+							   ((parseInt(destinazione[i].cx)+diametro_nodi+10).toString())+","+((parseInt(destinazione[i].cy)+5).toString())+" "+
+							   ((parseInt(destinazione[i].cx)+diametro_nodi).toString())+","+((parseInt(destinazione[i].cy)).toString())+" ";
+			PolygonData.push({ "fill":  "black", "stroke": "black" ,"stroke-width":"0.5", "points": puntiFreccia})
+			
+			//curve di raccordo
+			var lineFunction = d3.svg.line()
+		 							.x(function(d) { return d.x; })
+									.y(function(d) { return d.y; })
+									.interpolate("basis");
+			//The line SVG Path we draw
+			var lineGraph = svgSelection.append("path")
+		                        .attr("d", lineFunction(PuntiRaccordo))
+		                        .attr("stroke", "black")
+		                        .attr("stroke-width", 0.5)
+		                        .attr("fill", "none");
+			//svuoto array dei punti per la creazione delle curve di controllo
+			PuntiRaccordo.pop();
+			PuntiRaccordo.pop();
+			PuntiRaccordo.pop();
+		}
+		if((sorgente[i].cx>destinazione[i].cx)&& (sorgente[i].cy<destinazione[i].cy)){
+			SegmentData.push({"x1":parseInt(sorgente[i].cx,10),"y1":parseInt(sorgente[i].cy,10)+diametro_nodi,"x2":(sorgente[i].cx),"y2":parseInt(destinazione[i].cy,10)-diametro_nodi});
+			SegmentData.push({"x1":parseInt(sorgente[i].cx,10)-diametro_nodi,"y1":destinazione[i].cy,"x2":parseInt(destinazione[i].cx,10)+diametro_nodi,"y2":destinazione[i].cy});
+			PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10),"y":parseInt(destinazione[i].cy,10)-diametro_nodi});
+			PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10),"y":parseInt(destinazione[i].cy,10)});
+			PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10)-diametro_nodi,"y":parseInt(destinazione[i].cy,10)});
+
+			var puntiFreccia = ((parseInt(destinazione[i].cx)+diametro_nodi+10).toString())+","+((parseInt(destinazione[i].cy)-5).toString())+" "+
+							   ((parseInt(destinazione[i].cx)+diametro_nodi+10).toString())+","+((parseInt(destinazione[i].cy)+5).toString())+" "+
+							   ((parseInt(destinazione[i].cx)+diametro_nodi).toString())+","+((parseInt(destinazione[i].cy)).toString())+" ";
+			PolygonData.push({ "fill":  "black", "stroke": "black" ,"stroke-width":"0.5", "points": puntiFreccia})
+			
+			//curve di raccordo
+			var lineFunction = d3.svg.line()
+		 							.x(function(d) { return d.x; })
+									.y(function(d) { return d.y; })
+									.interpolate("basis");
+			//The line SVG Path we draw
+			var lineGraph = svgSelection.append("path")
+		                        .attr("d", lineFunction(PuntiRaccordo))
+		                        .attr("stroke", "black")
+		                        .attr("stroke-width", 0.5)
+		                        .attr("fill", "none");
+			//svuoto array dei punti per la creazione delle curve di controllo
+			PuntiRaccordo.pop();
+			PuntiRaccordo.pop();
+			PuntiRaccordo.pop();
+		}
+		if((sorgente[i].cx<destinazione[i].cx)&& (sorgente[i].cy>destinazione[i].cy)){
+			SegmentData.push({"x1":parseInt(sorgente[i].cx,10),"y1":parseInt(sorgente[i].cy,10)-diametro_nodi,"x2":(sorgente[i].cx),"y2":parseInt(destinazione[i].cy,10)+diametro_nodi});
+			SegmentData.push({"x1":parseInt(sorgente[i].cx,10)+diametro_nodi,"y1":destinazione[i].cy,"x2":parseInt(destinazione[i].cx,10)-diametro_nodi,"y2":destinazione[i].cy});
+			PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10),"y":parseInt(destinazione[i].cy,10)+diametro_nodi});
+			PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10),"y":parseInt(destinazione[i].cy,10)});
+			PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10)+diametro_nodi,"y":parseInt(destinazione[i].cy,10)});
+
+			var puntiFreccia = ((parseInt(destinazione[i].cx)-diametro_nodi-10).toString())+","+((parseInt(destinazione[i].cy)-5).toString())+" "+
+							   ((parseInt(destinazione[i].cx)-diametro_nodi-10).toString())+","+((parseInt(destinazione[i].cy)+5).toString())+" "+
+							   ((parseInt(destinazione[i].cx)-diametro_nodi).toString())+","+((parseInt(destinazione[i].cy)).toString())+" ";
+			PolygonData.push({ "fill":  "black", "stroke": "black" ,"stroke-width":"0.5", "points": puntiFreccia})
+			
+			//curve di raccordo
+			var lineFunction = d3.svg.line()
+		 							.x(function(d) { return d.x; })
+									.y(function(d) { return d.y; })
+									.interpolate("basis");
+			//The line SVG Path we draw
+			var lineGraph = svgSelection.append("path")
+		                        .attr("d", lineFunction(PuntiRaccordo))
+		                        .attr("stroke", "black")
+		                        .attr("stroke-width", 0.5)
+		                        .attr("fill", "none");
+			//svuoto array dei punti per la creazione delle curve di controllo
+			PuntiRaccordo.pop();
+			PuntiRaccordo.pop();
+			PuntiRaccordo.pop();
+		}
+	}
+
+	//segmenti
+	var lines = svgSelection.selectAll("line")
+    						.data(SegmentData)
+    						.enter()
+    						.append("line");
+	var lineAttributes = lines
+    						.attr("x1", function (d) { return d.x1; })
+    						.attr("y1", function (d) { return d.y1; })
+    						.attr("x2", function (d) { return d.x2; })
+    						.attr("y2", function (d) { return d.y2; })
+    						.attr("stroke-width", 0.5)
+							.attr("stroke", "black");
+	
+	var Polygons = svgSelection.selectAll("polygon")
+								.data(PolygonData)
+								.enter()
+								.append("polygon");
+	var PolygonAttributes = Polygons
+								.attr("points", function (d) { return d.points; })
+								.style("fill", function (d) { return d.fill; })
+
+	//add legend
+	svgSelection.append("circle").attr("cx",30).attr("cy",30).attr("r", 10).style("fill", "red")
+	svgSelection.append("circle").attr("cx",30).attr("cy",60).attr("r", 10).style("fill", "blue")
+	svgSelection.append("text").attr("x", 50).attr("y", 30).attr("font-weight",600).text("Piatti").style("font-size", "15px").attr("alignment-baseline","middle")
+	svgSelection.append("text").attr("x", 50).attr("y", 60)	.attr("font-weight",600).text("Ingredienti").style("font-size", "15px").attr("alignment-baseline","middle")
