@@ -2917,18 +2917,9 @@
  		.attr("height", altezza_bordo)
 		.style("border", "1px solid black");
 	
-	function isInRange(arrayUsed, currentValue, soglia){
-		for(var i=0; i<arrayUsed.length; i++){
-			if(Math.abs(arrayUsed[i] - currentValue)<soglia) return false;
-		}
-		return true;
-	}
-
-		//disegno nodi in ordine dell'array areas
+	//disegno nodi in ordine dell'array areas
 	var NodeData =[];
 	
-	var xAlreadyUsed = [];
-	var yAlreadyUsed = [];
 	var len_selected_meals = selected_meals.length;
 	var len_selected_ingredients = ingredients.length;
 	var spacing;
@@ -2948,20 +2939,20 @@
 
 	var indexToSplit = ingredients.length/2;
 	var first_ingredients_list = ingredients.slice(0, indexToSplit);
-	var second_ingredients_list = ingredients.slice(indexToSplit + 1)
+	var second_ingredients_list = ingredients.slice(indexToSplit)
 	//disegno nodi in ordine dell'array ingredients
 	for (var i = 0; i < first_ingredients_list.length; i++) {
 		let startX_prima_diagonale = 15;
 		let startY_prima_diagonale = 600;
 		//in questo caso ingredienti e nodi non devo condividere l'ordinata
-	    NodeData.push({"cx": startX_prima_diagonale+(i*spacing), "cy": startY_prima_diagonale-(i*spacing-3), "radius": diametro_nodi, "color" : "blue", "id":ingredients[i]});
+	    NodeData.push({"cx": startX_prima_diagonale+(i*spacing), "cy": startY_prima_diagonale-(i*spacing-3), "radius": diametro_nodi, "color" : "blue", "id":first_ingredients_list[i]});
 
 	}
 	for (var i=0; i<second_ingredients_list.length;i++){
 		let startX_seconda_diagonale = 300;
 		let startY_seconda_diagonale = 980;
 		//in questo caso devo far sì che ingredienti e nodi non condividano la ascissa
-		NodeData.push({"cx": startX_seconda_diagonale+(i*spacing-3), "cy": startY_seconda_diagonale-(i*spacing), "radius": diametro_nodi, "color" : "blue", "id":ingredients[i]});
+		NodeData.push({"cx": startX_seconda_diagonale+(i*spacing-3), "cy": startY_seconda_diagonale-(i*spacing), "radius": diametro_nodi, "color" : "blue", "id":second_ingredients_list[i]});
 	}
 	console.log(NodeData.length)
 
