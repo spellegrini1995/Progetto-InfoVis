@@ -2758,11 +2758,7 @@
 		spacing = 330/(len_selected_ingredients/4)
 	}
 
-	for (var i = 0; i < selected_meals.length; i++) {
-		startX = 330;
-		startY = 660;
-		NodeData.push({"cx": startX+(i*spacing), "cy": startY-(i*spacing), "radius": diametro_nodi, "color" : "red", "id":selected_meals[i]});
-	}
+	
 
 	var indexToSplit = ingredients.length/2;
 	var first_ingredients_list = ingredients.slice(0, indexToSplit);
@@ -2770,18 +2766,33 @@
 	//disegno nodi in ordine dell'array ingredients
 	for (var i = 0; i < first_ingredients_list.length; i++) {
 		let startX_prima_diagonale = 15;
-		let startY_prima_diagonale = 600;
+		let startY_prima_diagonale = 700;
 		//in questo caso ingredienti e nodi non devo condividere l'ordinata
 	    NodeData.push({"cx": startX_prima_diagonale+(i*spacing), "cy": startY_prima_diagonale-(i*spacing-3), "radius": diametro_nodi, "color" : "blue", "id":first_ingredients_list[i]});
-
 	}
+	
+
 	for (var i=0; i<second_ingredients_list.length;i++){
-		let startX_seconda_diagonale = 300;
+		let startX_seconda_diagonale = 345;
 		let startY_seconda_diagonale = 980;
 		//in questo caso devo far sì che ingredienti e nodi non condividano la ascissa
 		NodeData.push({"cx": startX_seconda_diagonale+(i*spacing-3), "cy": startY_seconda_diagonale-(i*spacing), "radius": diametro_nodi, "color" : "blue", "id":second_ingredients_list[i]});
 	}
-	//console.log(NodeData.length)
+
+	k1 = Math.round(first_ingredients_list.length/2)
+	k2 = Math.round(first_ingredients_list.length+(second_ingredients_list.length/2))
+	startX_mealsI = NodeData[k1-1].cx
+	startX_mealsII = NodeData[k1].cx
+	startY_mealsI = NodeData[k1-1].cy
+	startY_mealsII = NodeData[k2].cy
+
+	startX_meals = (startX_mealsII+startX_mealsI)/2
+	start_Y_meals = (startY_mealsII+startY_mealsI)/2
+	for (var i = 0; i < selected_meals.length; i++) {
+		//mettiamo lo start x in mezzo a due nodi della diagonale
+		
+		NodeData.push({"cx": startX_meals+(i*spacing), "cy": start_Y_meals-(i*spacing), "radius": diametro_nodi, "color" : "red", "id":selected_meals[i]});
+	}
 
 	// define tooltip
 	// create a tooltip
@@ -2836,10 +2847,10 @@
 	for (var j = 0; j < Edge_Graph.length; j++) {
 		for (var i = 0; i < (circles.length); i++) {
 			if (circles[i].getAttribute("id")==Edge_Graph[j].sorgente){
-				sorgente.push({"id":circles[i].getAttribute("id"),"cx":circles[i].getAttribute("cx"),"cy":circles[i].getAttribute("cy")});
+				sorgente.push({"id":circles[i].getAttribute("id"),"cx":parseFloat(circles[i].getAttribute("cx")),"cy":parseFloat(circles[i].getAttribute("cy"))});
 			}
 			if (circles[i].getAttribute("id")==Edge_Graph[j].destinazione){
-				destinazione.push({"id":circles[i].getAttribute("id"),"cx":circles[i].getAttribute("cx"),"cy":circles[i].getAttribute("cy")});
+				destinazione.push({"id":circles[i].getAttribute("id"),"cx":parseFloat(circles[i].getAttribute("cx")),"cy":parseFloat(circles[i].getAttribute("cy"))});
 			}
 		}
 	}	
@@ -2853,6 +2864,7 @@
 	for (var i = 0; i < sorgente.length; i++) {
 		//se nodo sorgente è minore del nodo destinazione
 		if ((sorgente[i].cx < destinazione[i].cx) && (sorgente[i].cy < destinazione[i].cy)){
+
 			SegmentData.push({"x1":parseInt(sorgente[i].cx,10),"y1":parseInt(sorgente[i].cy,10)+diametro_nodi,"x2":(sorgente[i].cx),"y2":parseInt(destinazione[i].cy,10)-diametro_nodi});
 			SegmentData.push({"x1":parseInt(sorgente[i].cx,10)+diametro_nodi,"y1":destinazione[i].cy,"x2":parseInt(destinazione[i].cx,10)-diametro_nodi,"y2":destinazione[i].cy});
 			PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10),"y":parseInt(destinazione[i].cy,10)-diametro_nodi});
@@ -2880,6 +2892,7 @@
 			PuntiRaccordo.pop();
 			PuntiRaccordo.pop();
 			PuntiRaccordo.pop();
+			console.log("caso1")
 		}
 		
 		//se nodo sorgente è maggiore del nodo destinazione
@@ -2911,6 +2924,7 @@
 			PuntiRaccordo.pop();
 			PuntiRaccordo.pop();
 			PuntiRaccordo.pop();
+			console.log("caso2")
 		}
 		if((sorgente[i].cx>destinazione[i].cx)&& (sorgente[i].cy<destinazione[i].cy)){
 			SegmentData.push({"x1":parseInt(sorgente[i].cx,10),"y1":parseInt(sorgente[i].cy,10)+diametro_nodi,"x2":(sorgente[i].cx),"y2":parseInt(destinazione[i].cy,10)-diametro_nodi});
@@ -2939,6 +2953,7 @@
 			PuntiRaccordo.pop();
 			PuntiRaccordo.pop();
 			PuntiRaccordo.pop();
+			console.log("caso3")
 		}
 		if((sorgente[i].cx<destinazione[i].cx)&& (sorgente[i].cy>destinazione[i].cy)){
 			SegmentData.push({"x1":parseInt(sorgente[i].cx,10),"y1":parseInt(sorgente[i].cy,10)-diametro_nodi,"x2":(sorgente[i].cx),"y2":parseInt(destinazione[i].cy,10)+diametro_nodi});
@@ -2967,6 +2982,7 @@
 			PuntiRaccordo.pop();
 			PuntiRaccordo.pop();
 			PuntiRaccordo.pop();
+			console.log("caso4")
 		}
 	}
 

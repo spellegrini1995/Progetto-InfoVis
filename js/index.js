@@ -2872,7 +2872,7 @@
 			var value2=category;
 			var queryString = "?para1=" + value1 + "&para2=" + value2;
 			//window.location.href = "graph.html" + queryString;
-			window.open("C:/Users/simpe/Downloads/Progetto-InfoVis-A.A.-2018-2019-master/graph.html"+queryString,"_blank");
+			window.open("graph.html"+queryString,"_blank");
 		}
 		else alert("Attenzione: hai selezionato un filtro in cui non sono presenti nè piatti nè ingredienti!");
 
