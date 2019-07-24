@@ -2693,36 +2693,36 @@
 	- nella terza posizione c'è un struttura JSON per gli archi piatti-ingredienti (edge_graph) del tipo 
 	  {"sorgente": "nome_piatto", "destinazione": "nome_ingrediente"}; */
 	function setAreaAndCategory(area, category){
-	var piatto;
-	var nodi_piatto = [];
-	var set_nodi_ingredienti = new Set();
-	var edge_graph = [];
-	
-	var result = [];
-	dataset.forEach(function(value, index) {
-		Object.keys(value).forEach(function(v, i) {
-			piatto = value[v];
-			var ingredienti;
-			var tmp;
-			if(piatto.area == area && piatto.category == category){
-				nodi_piatto.push(piatto.name);
-				ingredienti = piatto.ingredients;
-				for(var i = 0; i<ingredienti.length; i++){
-					tmp = {"sorgente":piatto.name,
-						   "destinazione":ingredienti[i]};
-					edge_graph.push(tmp);
-					set_nodi_ingredienti.add(ingredienti[i]);
+		var piatto;
+		var nodi_piatto = [];
+		var set_nodi_ingredienti = new Set();
+		var edge_graph = [];
+		
+		var result = [];
+		dataset.forEach(function(value, index) {
+			Object.keys(value).forEach(function(v, i) {
+				piatto = value[v];
+				var ingredienti;
+				var tmp;
+				if(piatto.area == area && piatto.category == category){
+					nodi_piatto.push(piatto.name);
+					ingredienti = piatto.ingredients;
+					for(var i = 0; i<ingredienti.length; i++){
+						tmp = {"sorgente":piatto.name,
+							   "destinazione":ingredienti[i]};
+						edge_graph.push(tmp);
+						set_nodi_ingredienti.add(ingredienti[i]);
+					}
 				}
-			}
-		})
-	});
-	var nodi_ingredienti = Array.from(set_nodi_ingredienti);
-	result[0] = nodi_piatto;
-	result[1] = nodi_ingredienti;
-	result[2] = edge_graph;
-	return result;
-	//	console.log(result);
-}
+			})
+		});
+		var nodi_ingredienti = Array.from(set_nodi_ingredienti);
+		result[0] = nodi_piatto;
+		result[1] = nodi_ingredienti;
+		result[2] = edge_graph;
+		return result;
+		//	console.log(result);
+	}
 
 	
 	var areas =[
@@ -2818,15 +2818,6 @@
 	.attr("height", y.rangeBand())
 	.style("stroke-width", 4)
 
-	var cellOver = row.selectAll(".cell")
-	.data(function(d) { return d; })
-	.enter().append("rect")
-	.attr("class", "cell")
-	.attr("x", function(d, i) { return x(i); })
-	.attr("width", x.rangeBand())
-	.attr("height", y.rangeBand())
-	.style("stroke-width", 1)
-	
 	row.append("line")
 	.attr("x2", width);
 
@@ -2835,6 +2826,7 @@
 	.attr("y", y.rangeBand() / 2)
 	.attr("dy", ".32em")
 	.attr("text-anchor", "end")
+	.attr("font-weight",600)
 	.text(function(d, i) { return areas[i]; });
 
 	var column = svg.selectAll(".column")
@@ -2851,6 +2843,7 @@
 	.attr("y", x.rangeBand() / 2)
 	.attr("dy", ".32em")
 	.attr("text-anchor", "start")
+	.attr("font-weight",600)
 	.text(function(d, i) { return d; });
 
 	// define tooltip
@@ -2861,7 +2854,11 @@
 	tooltip.append('div')                           
 	.attr('class', 'area');                        
 	tooltip.append('div')                   
-	.attr('class', 'categoria');                 
+	.attr('class', 'categoria');   
+	tooltip.append('div')                   
+	.attr('class', 'piatti');
+	tooltip.append('div')                   
+	.attr('class', 'ingredienti');                     
 	
 	row.selectAll(".cell")
 	.data(function(d, i) { return matrix[i]; })
@@ -2874,9 +2871,14 @@
 		//var tmp = result[0];
 		//alert(tmp[0]);
 	})
-	.on('mouseover', function(d,i,j){                                             
+	.on('mouseover', function(d,i,j){
+	var res = setAreaAndCategory(areas[j], categories[i]);
+	var piat = res[0].length + "";                                             
+	var ing = res[1].length + "";                                             
 	tooltip.select('.area').html('Area: '+areas[j].bold());        
 	tooltip.select('.categoria').html('Categoria: '+categories[i].bold());    
+	tooltip.select('.piatti').html('Piatti: '+piat.bold());    
+	tooltip.select('.ingredienti').html('Ingredienti: '+ing.bold());    
 	tooltip.style('display', 'block');                    
 	})
 	.on('mouseout', function() {                     
@@ -2888,11 +2890,9 @@
 	})
 	.on("mouseenter", function(d) {
     d3.select(this)
+       .style("stroke-width", 2)
        .attr("stroke","white")
        .transition()
-       .duration(100)
-       .attr("d", cellOver)             
-       .attr("stroke-width","none");
 	})
 	.on("mouseleave", function(d) {
     d3.select(this).transition()            
@@ -2910,16 +2910,19 @@
 	var diametro_nodi=10;
 	var larghezza_bordo = 990;
 	var altezza_bordo = 990;
-	var bodySelection = d3.select ( "#chart" );
+	var bodySelection = d3.select ("#chart");
 
 	var svgSelection = bodySelection.append("svg")
 		.attr("width", larghezza_bordo)
  		.attr("height", altezza_bordo)
 		.style("border", "1px solid black");
 	
-	//disegno nodi in ordine dell'array areas
+	
+		//disegno nodi in ordine dell'array areas
 	var NodeData =[];
 	
+	var xAlreadyUsed = [];
+	var yAlreadyUsed = [];
 	var len_selected_meals = selected_meals.length;
 	var len_selected_ingredients = ingredients.length;
 	var spacing;
@@ -2954,20 +2957,54 @@
 		//in questo caso devo far sì che ingredienti e nodi non condividano la ascissa
 		NodeData.push({"cx": startX_seconda_diagonale+(i*spacing-3), "cy": startY_seconda_diagonale-(i*spacing), "radius": diametro_nodi, "color" : "blue", "id":second_ingredients_list[i]});
 	}
-	console.log(NodeData.length)
+	//console.log(NodeData.length)
 
-	var circles = svgSelection.selectAll("circle")
-    						.data(NodeData)
-    						.enter()
-    						.append("circle");
+	// define tooltip
+	// create a tooltip
+    var new_tooltip = d3.select("#chart")
+      .append("div")
+      .attr("class", "tooltip")
+
+    new_tooltip.append('div')                           
+	.attr('class', 'descr');   
+            
+	var circles = 
+	svgSelection.selectAll(".circle")
+	.data(NodeData)
+	.enter()
+	.append("circle")
+	.attr("class","circle")
+	.on('mouseover', function(d){                          
+		new_tooltip.select('.descr').html(d.id.bold());        
+		new_tooltip.style('display', 'block');                    
+	})
+	.on('mouseout', function() {                     
+	new_tooltip.style('display', 'none'); 
+	})
+	.on('mousemove', function(d) { 
+	new_tooltip.style('top', (d3.event.layerY + 10) + 'px') 
+	.style('left', (d3.event.layerX + 10) + 'px'); 
+	})
+	.on("mouseenter", function(d) {
+    d3.select(this)
+       .style("stroke-width", 2)
+       .attr("stroke","white")
+       .transition()
+	})
+	.on("mouseleave", function(d) {
+    d3.select(this).transition()            
+       .attr("d", d)
+       .attr("stroke","none");
+	})
 
    	var circleAttributes = circles
 							.attr("id", function (d) { return d.id; })
  							.attr("cx", function (d) { return d.cx; })
  							.attr("cy", function (d) { return d.cy; })
  							.attr("r", function (d) { return d.radius; })
- 							.style("fill", function (d) { return d.color; });
-	
+ 							.style("fill", function (d) { return d.color; })
+
+
 	//disegno archi
 	var sorgente=[];
 	var destinazione=[];
@@ -3129,7 +3166,13 @@
 	var PolygonAttributes = Polygons
 								.attr("points", function (d) { return d.points; })
 								.style("fill", function (d) { return d.fill; })
-	
+
+	//add legend
+	svgSelection.append("circle").attr("cx",30).attr("cy",30).attr("r", 10).style("fill", "red")
+	svgSelection.append("circle").attr("cx",30).attr("cy",60).attr("r", 10).style("fill", "blue")
+	svgSelection.append("text").attr("x", 50).attr("y", 30).attr("font-weight",600).text("Piatti").style("font-size", "15px").attr("alignment-baseline","middle")
+	svgSelection.append("text").attr("x", 50).attr("y", 60)	.attr("font-weight",600).text("Ingredienti").style("font-size", "15px").attr("alignment-baseline","middle")
+
 	};
 	
 		
