@@ -39,8 +39,25 @@
     		//	console.log(result);
     	}
 
+        function getIngredientsNumber(area,category){
+            var piatto;
+            var set_nodi_ingredienti = new Set();
+            dataset.forEach(function(value, index) {
+                Object.keys(value).forEach(function(v, i) {
+                    piatto = value[v];
+                    var ingredienti;
+                    var tmp;
+                    if(piatto.area == area && piatto.category == category){
+                        ingredienti = piatto.ingredients;
+                        for(var i = 0; i<ingredienti.length; i++){
+                            set_nodi_ingredienti.add(ingredienti[i]);
+                        }
+                    }
+                })
+            })
+            return Array.from(set_nodi_ingredienti);
+       }
     	
-
     	var margin = {top: 115, right: 100, bottom: 100, left: 100},
     	width = 800;
     	height = 350;
@@ -64,7 +81,7 @@
     	for (var i = 0; i < numrows; i++) {
     	matrix[i] = new Array(numrows);
     	for (var j = 0; j < numcols; j++) {
-    	matrix[i][j] = Math.random()*2 - 1;
+    	matrix[i][j] = getIngredientsNumber(areas[i],categories[j]).length;
     	}
     	}
 
@@ -80,8 +97,6 @@
         .paddingInner(0.02)
         .paddingOuter(0.05);
 
-
-
     	var rowLabels = new Array(numrows);
     	for (var i = 0; i < numrows; i++) {
     	rowLabels[i] = areas[i];
@@ -92,10 +107,10 @@
     	columnLabels[i] = categories[i];
     	}
 
-    	var colorMap = d3.scaleLinear()
-    	.domain([-1, 0, 1])
+    	var colorMap = d3.scaleSequential(d3.interpolateRgb("white","black"))
+        .domain([0, 65]);
     	//.range(["red", "white", "blue"]);    
-    	.range(["brown", "#ddd", "darkgreen"]);
+    	//.range(["brown", "#ddd", "darkgreen"]);
 
     	var row = svg.selectAll(".row")
     	.data(matrix)
