@@ -35,7 +35,7 @@ The provided data set contains three files. File “ingredients" lists 297 food 
 
 ## Funzionalità Progettuali
 
-- <p align="justify"> Separazione della visualizzazione in 2 pagine HTML distinte: nella prima si visualizza la <i><b>Matrice degli Ingredienti</b></i>, una struttura dati che raccoglie piatti ed ingredienti in base ad una certa <i>Area Geografica</i> ed una <i>Categoria Culinaria</i>. Cliccando su un riquadro che presenti almeno un piatto al suo interno, viene generata una seconda pagina HTML nel quale viene visualizzato il <i><b>Grafo degli Ingredienti</b></i> filtrato per Area e Categoria e disegnato tramite tecnica L-Drawing.</p>
+- <p align="justify"> Separazione della visualizzazione in 2 pagine HTML distinte: nella prima si visualizza la <i><b>Matrice degli Ingredienti</b></i>, una struttura dati che raccoglie piatti ed ingredienti in base ad una certa <i>Area Geografica</i> ed una <i>Categoria Culinaria</i>. Più piatti sono presenti in un certo riquadro, più esso sarà scuro. Cliccando su un riquadro che presenti almeno un piatto al suo interno, viene generata una seconda pagina HTML nel quale viene visualizzato il <i><b>Grafo degli Ingredienti</b></i> filtrato per Area e Categoria e disegnato tramite tecnica L-Drawing.</p>
 
 - <p align="justify"> Passando con il mouse sui vari riquadri della Matrice degli Ingredienti è possibile visionare alcuni dettagli: nome dell'area, nome della categoria, numero di piatti e numero di ingredienti. Il riquadro viene evidenziato tramite l'apposizione di un contorno bianco.</p>
 
@@ -62,7 +62,7 @@ La versione di [d3.js](https://github.com/d3/d3) utilizzata per questo progetto 
 <p align="justify">
 <b>Matrice Degli Ingredienti</b>
 
-![alt text](img/Matrice_Ingredienti.png "Matrice Degli Ingredienti")
+![alt text](img/Matrice_Degli_Ingredienti.png "Matrice Degli Ingredienti")
 
 </p>
 
