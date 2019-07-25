@@ -26,7 +26,7 @@ The provided data set contains three files. File “ingredients" lists 297 food 
 
 - <p align="justify"> Passando con il mouse sui vari riquadri della Matrice degli Ingredienti è possibile visionare alcuni dettagli: nome dell'area, nome della categoria, numero di piatti e numero di ingredienti. Il riquadro viene evidenziato tramite l'apposizione di un contorno bianco.</p>
 
-- <p align="justify"> Passando con il mouse sui vari nodi del Grafo Ingredienti è possibile visionareil nome del piatto o dell'ingrediente selezionato. Il nodo viene evidenziato mediante un leggero efetto di rimpicciolimento</p>
+- <p align="justify"> Passando con il mouse sui vari nodi del Grafo degli Ingredienti è possibile visionare il nome del piatto o dell'ingrediente selezionato. Il nodo viene evidenziato mediante un leggero efetto di rimpicciolimento</p>
 
 ## Caricamento dati da file esterno
 <p align="justify"> Qualora si volessero caricare i dati da file esterno, potremmo riscontrare dei problemi di sicurezza relativi alle politiche usate dal particolare Web Browser scelto. Per questo motivo, bisogna usare un server http.
