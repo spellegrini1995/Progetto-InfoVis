@@ -1,11 +1,24 @@
 # Progetto InfoVis A.A. 2018-2019 - L-Drawing per Grafo degli Ingredienti
 Progetto Finale per il corso di Visualizzazione delle Informazioni, Università Roma Tre, a.a. 2018-2019.
 
-## Specifica del progetto e riferimenti
+## Indice dei contenuti
+
+- [Specifica del progetto](#specifica-del-progetto)
+- [Riferimenti](#riferimenti)
+- [Funzionalità Progettuali](#funzionalità-progettuali)
+- [Caricamento dati da file esterno](#caricamento-dati-da-file-esterno)
+- [Versione utilizzata](#versione-utilizzata)
+- [Team](#team)
+- [Anteprime grafiche](#anteprime-grafiche)
+
+## Specifica del progetto
 <p align="justify">
   
 Creazione di un sistema di visualizzazione per il Grafo degli Ingredienti che sfrutti la tecnica denominata L-Drawing, un nuovo paradigma per la rappresentazione di grafici diretti che mira a combinare le caratteristiche di leggibilità dei disegni ortogonali con il potere espressivo delle rappresentazioni di matrici. 
-  
+</p>
+
+## Riferimenti
+
 <i>
 The data set describes 151 food recipes extracted from the TheMealDB database. TheMealDB was built in 2016 to provide a free data source API for recipes online. TheMealDB originated on the Kodi forums as a way to browse recipes on a TV.
 
@@ -37,7 +50,13 @@ The provided data set contains three files. File “ingredients" lists 297 food 
 </p>
 
 ## Versione utilizzata
-La versione di [d3.js](https://github.com/d3/d3) utilizzata per questo mini progetto è la [v5](https://github.com/d3/d3/blob/master/CHANGES.md), ad oggi la più recente.
+La versione di [d3.js](https://github.com/d3/d3) utilizzata per questo progetto è la [v5](https://github.com/d3/d3/blob/master/CHANGES.md), ad oggi la più recente.
+
+## Team
+
+- [Vincenzo Martello](https://github.com/vincenzomartello)
+- [Nicholas Napolitano](https://github.com/nicholasnapolitano)
+- [Simone Pellegrini](https://github.com/spellegrini1995)
 
 ## Anteprime grafiche
 <p align="justify">
