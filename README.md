@@ -17,7 +17,7 @@ The provided data set contains three files. File “ingredients" lists 297 food 
 
 [3] L-Drawing: https://arxiv.org/pdf/1509.00684v1.pdf
 
-<\i>
+</i>
 </p>
 
 ## Funzionalità Progettuali
@@ -40,5 +40,16 @@ The provided data set contains three files. File “ingredients" lists 297 food 
 La versione di [d3.js](https://github.com/d3/d3) utilizzata per questo mini progetto è la [v5](https://github.com/d3/d3/blob/master/CHANGES.md), ad oggi la più recente.
 
 ## Anteprime grafiche
+<p align="justify">
+<b>Matrice Degli Ingredienti</b>
+
 ![alt text](img/Matrice_Ingredienti.png "Matrice Degli Ingredienti")
+
+</p>
+
+<p align="justify">
+<b>Grafo Ingredienti Area-Categoria</b>
+  
 ![alt text](img/Grafo_Ingredienti_Filtrato.png "Grafo degli Ingredienti Area-Categoria")
+  
+ </p>
