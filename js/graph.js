@@ -59,20 +59,16 @@
 		var y_freccia = 3;
 		var spessore_linea_raccordo = 0.4;
 		if(ingredients.length >= 20 && ingredients.length <=45){
-			diametro_nodi=5;
+			diametro_nodi=6;
 			x_freccia = 5;
 			y_freccia = 3;
 		} 
 		if(ingredients.length == 65 ){
-			diametro_nodi=3;
+			diametro_nodi=5;
 			x_freccia = 3;
 			y_freccia = 1;
 		} 
-		if(ingredients.length ==45 || ingredients.length ==42){
-			diametro_nodi=4;
-			x_freccia = 3;
-			y_freccia = 1;
-		} 
+		
 		var larghezza_bordo = 990;
 		var altezza_bordo = 501;
 		var bodySelection = d3.select ("#chart2");
@@ -119,25 +115,25 @@
 			let startX_prima_diagonale = 15;
 			let startY_prima_diagonale = starty-(yspacing/2)
 			//in questo caso ingredienti e nodi non devo condividere l'ordinata
-		    NodeData.push({"cx": startX_prima_diagonale+(i*xspacing), "cy": startY_prima_diagonale-(i*yspacing), "radius": diametro_nodi, "color" : "blue", "id":first_ingredients_list[i]});
+		    NodeData.push({"cx": Math.round(startX_prima_diagonale+(i*xspacing)), "cy": Math.round(startY_prima_diagonale-(i*yspacing)), "radius": diametro_nodi, "color" : "blue", "id":first_ingredients_list[i]});
 		}
 		for (var i=0; i<second_ingredients_list.length;i++){
 			let startX_seconda_diagonale = startx+(xspacing/2);
 			let startY_seconda_diagonale = (altezza_bordo/3)-10;
 			//in questo caso devo far sì che ingredienti e nodi non condividano la ascissa
-			NodeData.push({"cx": startX_seconda_diagonale+(i*xspacing), "cy": startY_seconda_diagonale-(i*yspacing), "radius": diametro_nodi, "color" : "blue", "id":second_ingredients_list[i]});
+			NodeData.push({"cx": Math.round(startX_seconda_diagonale+(i*xspacing)), "cy": Math.round(startY_seconda_diagonale-(i*yspacing)), "radius": diametro_nodi, "color" : "blue", "id":second_ingredients_list[i]});
 		}
 		for (var i = 0; i < third_ingredients_list.length; i++) {
 			let startX_terza_diagonale = startx+(xspacing/2);
 			let startY_terza_diagonale = altezza_bordo-15;
 			//in questo caso ingredienti e nodi non devo condividere l'ordinata
-		    NodeData.push({"cx": startX_terza_diagonale+(i*xspacing), "cy": startY_terza_diagonale-(i*yspacing), "radius": diametro_nodi, "color" : "blue", "id":third_ingredients_list[i]});
+		    NodeData.push({"cx": Math.round(startX_terza_diagonale+(i*xspacing)), "cy": Math.round(startY_terza_diagonale-(i*yspacing)), "radius": diametro_nodi, "color" : "blue", "id":third_ingredients_list[i]});
 		}
 		for (var i = 0; i < fourth_ingredients_list.length; i++) {
 			let startX_quarta_diagonale = (larghezza_bordo*2)/3
 			let startY_quarta_diagonale = starty-(yspacing/2);
 			//in questo caso ingredienti e nodi non devo condividere l'ordinata
-		    NodeData.push({"cx": startX_quarta_diagonale+(i*xspacing), "cy": startY_quarta_diagonale-(i*yspacing), "radius": diametro_nodi, "color" : "blue", "id":fourth_ingredients_list[i]});
+		    NodeData.push({"cx": Math.round(startX_quarta_diagonale+(i*xspacing)), "cy": Math.round(startY_quarta_diagonale-(i*yspacing)), "radius": diametro_nodi, "color" : "blue", "id":fourth_ingredients_list[i]});
 		}
 		
 
@@ -362,4 +358,6 @@
 		svgSelection.append("text").attr("x", 50).attr("y", 30).attr("font-weight",600).text("Piatti ("+selected_meals.length+")").style("font-size", "15px").attr("alignment-baseline","middle")
 		svgSelection.append("text").attr("x", 50).attr("y", 60)	.attr("font-weight",600).text("Ingredienti ("+ingredients.length+")").style("font-size", "15px").attr("alignment-baseline","middle")
 		
+		d3.selectAll("circle").raise();
+
 	});
