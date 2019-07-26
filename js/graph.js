@@ -230,7 +230,7 @@
 			                        .attr("d", lineFunction(PuntiRaccordo))
 			                        .attr("stroke", "black")
 			                        .attr("stroke-width", spessore_linea_raccordo)
-			                        .attr("fill", "none");
+			                        .attr("fill", "black");
 				//svuoto array dei punti per la creazione delle curve di controllo
 				PuntiRaccordo.pop();
 				PuntiRaccordo.pop();
@@ -262,7 +262,7 @@
 			                        .attr("d", lineFunction(PuntiRaccordo))
 			                        .attr("stroke", "black")
 			                        .attr("stroke-width", spessore_linea_raccordo)
-			                        .attr("fill", "none");
+			                        .attr("fill", "black");
 				//svuoto array dei punti per la creazione delle curve di controllo
 				PuntiRaccordo.pop();
 				PuntiRaccordo.pop();
@@ -291,7 +291,7 @@
 			                        .attr("d", lineFunction(PuntiRaccordo))
 			                        .attr("stroke", "black")
 			                        .attr("stroke-width", spessore_linea_raccordo)
-			                        .attr("fill", "none");
+			                        .attr("fill", "black");
 				//svuoto array dei punti per la creazione delle curve di controllo
 				PuntiRaccordo.pop();
 				PuntiRaccordo.pop();
@@ -315,12 +315,13 @@
 			 							.x(function(d) { return d.x; })
 										.y(function(d) { return d.y; })
 										.curve(d3.curveBasis);
+
 				//The line SVG Path we draw
 				var lineGraph = svgSelection.append("path")
 			                        .attr("d", lineFunction(PuntiRaccordo))
 			                        .attr("stroke", "black")
 			                        .attr("stroke-width", spessore_linea_raccordo)
-			                        .attr("fill", "none");
+			                        .attr("fill", "black");
 				//svuoto array dei punti per la creazione delle curve di controllo
 				PuntiRaccordo.pop();
 				PuntiRaccordo.pop();
