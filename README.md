@@ -69,6 +69,6 @@ La versione di [d3.js](https://github.com/d3/d3) utilizzata per questo progetto 
 <p align="justify">
 <b>Grafo Ingredienti Area-Categoria</b>
   
-![alt text](img/Grafo_Ingredienti_Filtrato.png "Grafo degli Ingredienti Area-Categoria")
+![alt text](img/Grafo_Ingredienti_Filtro.png "Grafo degli Ingredienti Area-Categoria")
   
  </p>
