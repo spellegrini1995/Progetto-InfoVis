@@ -53,9 +53,9 @@
 		var Edge_Graph = result[2]
 
 		//diametro nodi
-		var diametro_nodi=10;
+		var diametro_nodi=5;
 		var larghezza_bordo = 990;
-		var altezza_bordo = 990;
+		var altezza_bordo = 600;
 		var bodySelection = d3.select ("#chart2");
 
 		var svgSelection = bodySelection.append("svg")
@@ -68,54 +68,61 @@
 			//disegno nodi in ordine dell'array areas
 		var NodeData =[];
 		
-		var xAlreadyUsed = [];
-		var yAlreadyUsed = [];
 		var len_selected_meals = selected_meals.length;
 		var len_selected_ingredients = ingredients.length;
-		var spacing;
+		var xspacing;
+		var yspacing;
 		// la spaziatura tra nodi è determinata in base al rapporto tra ingredienti e piatti selezionati
 		if (len_selected_meals >len_selected_ingredients/4){
-			spacing = 330/len_selected_meals;
+			xspacing = (larghezza_bordo/3)/len_selected_meals;
+			yspacing = (altezza_bordo/3)/len_selected_meals;
 		}
 		else{
-			spacing = 330/(len_selected_ingredients/4)
+			xspacing = (larghezza_bordo)/len_selected_ingredients;
+			yspacing = (altezza_bordo)/len_selected_ingredients;
 		}
 
+		for (var i = 0; i < selected_meals.length; i++) {
+			//mettiamo lo start x in mezzo a due nodi della diagonale
+			var startx = (larghezza_bordo/3)+10;
+			var starty = 400;
+			NodeData.push({"cx": startx+(i*xspacing), "cy": starty-(i*yspacing), "radius": diametro_nodi, "color" : "red", "id":selected_meals[i]});
+		}
 		
-
-		var indexToSplit = ingredients.length/2;
+		var indexToSplit = Math.round(ingredients.length/4);
 		var first_ingredients_list = ingredients.slice(0, indexToSplit);
-		var second_ingredients_list = ingredients.slice(indexToSplit)
+		var second_ingredients_list = ingredients.slice(indexToSplit,indexToSplit*2);
+		var third_ingredients_list = ingredients.slice(indexToSplit*2,indexToSplit*3);
+		var fourth_ingredients_list = ingredients.slice(indexToSplit*3);
+
 		//disegno nodi in ordine dell'array ingredients
 		for (var i = 0; i < first_ingredients_list.length; i++) {
-			let startX_prima_diagonale = 15;
-			let startY_prima_diagonale = 700;
+			let startX_prima_diagonale = 10;
+			let startY_prima_diagonale = starty-(yspacing/2)
 			//in questo caso ingredienti e nodi non devo condividere l'ordinata
-		    NodeData.push({"cx": startX_prima_diagonale+(i*spacing), "cy": startY_prima_diagonale-(i*spacing-3), "radius": diametro_nodi, "color" : "blue", "id":first_ingredients_list[i]});
+		    NodeData.push({"cx": startX_prima_diagonale+(i*xspacing), "cy": startY_prima_diagonale-(i*yspacing), "radius": diametro_nodi, "color" : "blue", "id":first_ingredients_list[i]});
 		}
 		
 
 		for (var i=0; i<second_ingredients_list.length;i++){
-			let startX_seconda_diagonale = 345;
-			let startY_seconda_diagonale = 980;
+			let startX_seconda_diagonale = startx+(xspacing/2);
+			let startY_seconda_diagonale = (altezza_bordo/3) -10;
 			//in questo caso devo far sì che ingredienti e nodi non condividano la ascissa
-			NodeData.push({"cx": startX_seconda_diagonale+(i*spacing-3), "cy": startY_seconda_diagonale-(i*spacing), "radius": diametro_nodi, "color" : "blue", "id":second_ingredients_list[i]});
+			NodeData.push({"cx": startX_seconda_diagonale+(i*xspacing), "cy": startY_seconda_diagonale-(i*yspacing), "radius": diametro_nodi, "color" : "blue", "id":second_ingredients_list[i]});
 		}
-
-		k1 = Math.round(first_ingredients_list.length/2)
-		k2 = Math.round(first_ingredients_list.length+(second_ingredients_list.length/2))
-		startX_mealsI = NodeData[k1-1].cx
-		startX_mealsII = NodeData[k1].cx
-		startY_mealsI = NodeData[k1-1].cy
-		startY_mealsII = NodeData[k2].cy
-
-		startX_meals = (startX_mealsII+startX_mealsI)/2
-		start_Y_meals = (startY_mealsII+startY_mealsI)/2
-		for (var i = 0; i < selected_meals.length; i++) {
-			//mettiamo lo start x in mezzo a due nodi della diagonale
-			
-			NodeData.push({"cx": startX_meals+(i*spacing), "cy": start_Y_meals-(i*spacing), "radius": diametro_nodi, "color" : "red", "id":selected_meals[i]});
+		for (var i = 0; i < third_ingredients_list.length; i++) {
+			let startX_terza_diagonale = startx+(xspacing/2);
+			let startY_terza_diagonale = altezza_bordo-10;
+			//in questo caso ingredienti e nodi non devo condividere l'ordinata
+		    NodeData.push({"cx": startX_terza_diagonale+(i*xspacing), "cy": startY_terza_diagonale-(i*yspacing), "radius": diametro_nodi, "color" : "blue", "id":third_ingredients_list[i]});
 		}
+		for (var i = 0; i < fourth_ingredients_list.length; i++) {
+			let startX_quarta_diagonale = (larghezza_bordo*2)/3
+			let startY_quarta_diagonale = starty-(yspacing/2);
+			//in questo caso ingredienti e nodi non devo condividere l'ordinata
+		    NodeData.push({"cx": startX_quarta_diagonale+(i*xspacing), "cy": startY_quarta_diagonale-(i*yspacing), "radius": diametro_nodi, "color" : "blue", "id":fourth_ingredients_list[i]});
+		}
+		
 
 		// define tooltip
 		// create a tooltip
