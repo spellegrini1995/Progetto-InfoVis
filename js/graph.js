@@ -52,10 +52,29 @@
 		var ingredients = result[1];
 		var Edge_Graph = result[2]
 
-		//diametro nodi
-		var diametro_nodi=5;
+		//diametro nodi e dimensioni linee
+		var diametro_nodi=10;
+		var dimensione_freccia = "0.5";
+		var x_freccia = 5;
+		var y_freccia = 3;
+		var spessore_linea_raccordo = 0.4;
+		if(ingredients.length >= 20 && ingredients.length <=45){
+			diametro_nodi=5;
+			x_freccia = 5;
+			y_freccia = 3;
+		} 
+		if(ingredients.length == 65 ){
+			diametro_nodi=3;
+			x_freccia = 3;
+			y_freccia = 1;
+		} 
+		if(ingredients.length ==45 || ingredients.length ==42){
+			diametro_nodi=4;
+			x_freccia = 3;
+			y_freccia = 1;
+		} 
 		var larghezza_bordo = 990;
-		var altezza_bordo = 600;
+		var altezza_bordo = 501;
 		var bodySelection = d3.select ("#chart2");
 
 		var svgSelection = bodySelection.append("svg")
@@ -85,7 +104,7 @@
 		for (var i = 0; i < selected_meals.length; i++) {
 			//mettiamo lo start x in mezzo a due nodi della diagonale
 			var startx = (larghezza_bordo/3)+10;
-			var starty = 400;
+			var starty = 340;
 			NodeData.push({"cx": startx+(i*xspacing), "cy": starty-(i*yspacing), "radius": diametro_nodi, "color" : "red", "id":selected_meals[i]});
 		}
 		
@@ -97,22 +116,20 @@
 
 		//disegno nodi in ordine dell'array ingredients
 		for (var i = 0; i < first_ingredients_list.length; i++) {
-			let startX_prima_diagonale = 10;
+			let startX_prima_diagonale = 15;
 			let startY_prima_diagonale = starty-(yspacing/2)
 			//in questo caso ingredienti e nodi non devo condividere l'ordinata
 		    NodeData.push({"cx": startX_prima_diagonale+(i*xspacing), "cy": startY_prima_diagonale-(i*yspacing), "radius": diametro_nodi, "color" : "blue", "id":first_ingredients_list[i]});
 		}
-		
-
 		for (var i=0; i<second_ingredients_list.length;i++){
 			let startX_seconda_diagonale = startx+(xspacing/2);
-			let startY_seconda_diagonale = (altezza_bordo/3) -10;
+			let startY_seconda_diagonale = (altezza_bordo/3)-10;
 			//in questo caso devo far sì che ingredienti e nodi non condividano la ascissa
 			NodeData.push({"cx": startX_seconda_diagonale+(i*xspacing), "cy": startY_seconda_diagonale-(i*yspacing), "radius": diametro_nodi, "color" : "blue", "id":second_ingredients_list[i]});
 		}
 		for (var i = 0; i < third_ingredients_list.length; i++) {
 			let startX_terza_diagonale = startx+(xspacing/2);
-			let startY_terza_diagonale = altezza_bordo-10;
+			let startY_terza_diagonale = altezza_bordo-15;
 			//in questo caso ingredienti e nodi non devo condividere l'ordinata
 		    NodeData.push({"cx": startX_terza_diagonale+(i*xspacing), "cy": startY_terza_diagonale-(i*yspacing), "radius": diametro_nodi, "color" : "blue", "id":third_ingredients_list[i]});
 		}
@@ -177,10 +194,10 @@
 		for (var j = 0; j < Edge_Graph.length; j++) {
 			for (var i = 0; i < (circles.length); i++) {
 				if (circles[i].getAttribute("id")==Edge_Graph[j].sorgente){
-					sorgente.push({"id":circles[i].getAttribute("id"),"cx":parseFloat(circles[i].getAttribute("cx")),"cy":parseFloat(circles[i].getAttribute("cy"))});
+					sorgente.push({"id":circles[i].getAttribute("id"),"cx":parseInt(circles[i].getAttribute("cx"),10),"cy":parseInt(circles[i].getAttribute("cy"),10)});
 				}
 				if (circles[i].getAttribute("id")==Edge_Graph[j].destinazione){
-					destinazione.push({"id":circles[i].getAttribute("id"),"cx":parseFloat(circles[i].getAttribute("cx")),"cy":parseFloat(circles[i].getAttribute("cy"))});
+					destinazione.push({"id":circles[i].getAttribute("id"),"cx":parseInt(circles[i].getAttribute("cx"),10),"cy":parseInt(circles[i].getAttribute("cy"),10)});
 				}
 			}
 		}	
@@ -202,10 +219,10 @@
 				PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10)+diametro_nodi,"y":parseInt(destinazione[i].cy,10)});
 				
 				//attributi frecce
-				var puntiFreccia = ((parseInt(destinazione[i].cx)-diametro_nodi-10).toString())+","+((parseInt(destinazione[i].cy)-5).toString())+" "+
-								   ((parseInt(destinazione[i].cx)-diametro_nodi-10).toString())+","+((parseInt(destinazione[i].cy)+5).toString())+" "+
+				var puntiFreccia = ((parseInt(destinazione[i].cx)-diametro_nodi-x_freccia).toString())+","+((parseInt(destinazione[i].cy)-y_freccia).toString())+" "+
+								   ((parseInt(destinazione[i].cx)-diametro_nodi-x_freccia).toString())+","+((parseInt(destinazione[i].cy)+y_freccia).toString())+" "+
 								   ((parseInt(destinazione[i].cx)-diametro_nodi).toString())+","+((parseInt(destinazione[i].cy)).toString())+" ";
-				PolygonData.push({ "fill":  "black", "stroke": "black" ,"stroke-width":"0.5", "points": puntiFreccia})
+				PolygonData.push({ "fill":  "black", "stroke": "black" ,"stroke-width":dimensione_freccia, "points": puntiFreccia})
 				
 				//curve di raccordo
 				var lineFunction = d3.line()
@@ -216,7 +233,7 @@
 				var lineGraph = svgSelection.append("path")
 			                        .attr("d", lineFunction(PuntiRaccordo))
 			                        .attr("stroke", "black")
-			                        .attr("stroke-width", 0.5)
+			                        .attr("stroke-width", spessore_linea_raccordo)
 			                        .attr("fill", "none");
 				//svuoto array dei punti per la creazione delle curve di controllo
 				PuntiRaccordo.pop();
@@ -234,10 +251,10 @@
 				PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10)-diametro_nodi,"y":parseInt(destinazione[i].cy,10)});
 				
 				//attributi frecce
-				var puntiFreccia = ((parseInt(destinazione[i].cx)+diametro_nodi+10).toString())+","+((parseInt(destinazione[i].cy)-5).toString())+" "+
-								   ((parseInt(destinazione[i].cx)+diametro_nodi+10).toString())+","+((parseInt(destinazione[i].cy)+5).toString())+" "+
+				var puntiFreccia = ((parseInt(destinazione[i].cx)+diametro_nodi+x_freccia).toString())+","+((parseInt(destinazione[i].cy)-y_freccia).toString())+" "+
+								   ((parseInt(destinazione[i].cx)+diametro_nodi+x_freccia).toString())+","+((parseInt(destinazione[i].cy)+y_freccia).toString())+" "+
 								   ((parseInt(destinazione[i].cx)+diametro_nodi).toString())+","+((parseInt(destinazione[i].cy)).toString())+" ";
-				PolygonData.push({ "fill":  "black", "stroke": "black" ,"stroke-width":"0.5", "points": puntiFreccia})
+				PolygonData.push({ "fill":  "black", "stroke": "black" ,"stroke-width":dimensione_freccia, "points": puntiFreccia})
 				
 				//curve di raccordo
 				var lineFunction = d3.line()
@@ -248,7 +265,7 @@
 				var lineGraph = svgSelection.append("path")
 			                        .attr("d", lineFunction(PuntiRaccordo))
 			                        .attr("stroke", "black")
-			                        .attr("stroke-width", 0.5)
+			                        .attr("stroke-width", spessore_linea_raccordo)
 			                        .attr("fill", "none");
 				//svuoto array dei punti per la creazione delle curve di controllo
 				PuntiRaccordo.pop();
@@ -263,10 +280,10 @@
 				PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10),"y":parseInt(destinazione[i].cy,10)});
 				PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10)-diametro_nodi,"y":parseInt(destinazione[i].cy,10)});
 
-				var puntiFreccia = ((parseInt(destinazione[i].cx)+diametro_nodi+10).toString())+","+((parseInt(destinazione[i].cy)-5).toString())+" "+
-								   ((parseInt(destinazione[i].cx)+diametro_nodi+10).toString())+","+((parseInt(destinazione[i].cy)+5).toString())+" "+
+				var puntiFreccia = ((parseInt(destinazione[i].cx)+diametro_nodi+x_freccia).toString())+","+((parseInt(destinazione[i].cy)-y_freccia).toString())+" "+
+								   ((parseInt(destinazione[i].cx)+diametro_nodi+x_freccia).toString())+","+((parseInt(destinazione[i].cy)+y_freccia).toString())+" "+
 								   ((parseInt(destinazione[i].cx)+diametro_nodi).toString())+","+((parseInt(destinazione[i].cy)).toString())+" ";
-				PolygonData.push({ "fill":  "black", "stroke": "black" ,"stroke-width":"0.5", "points": puntiFreccia})
+				PolygonData.push({ "fill":  "black", "stroke": "black" ,"stroke-width":dimensione_freccia, "points": puntiFreccia})
 				
 				//curve di raccordo
 				var lineFunction = d3.line()
@@ -277,7 +294,7 @@
 				var lineGraph = svgSelection.append("path")
 			                        .attr("d", lineFunction(PuntiRaccordo))
 			                        .attr("stroke", "black")
-			                        .attr("stroke-width", 0.5)
+			                        .attr("stroke-width", spessore_linea_raccordo)
 			                        .attr("fill", "none");
 				//svuoto array dei punti per la creazione delle curve di controllo
 				PuntiRaccordo.pop();
@@ -292,10 +309,10 @@
 				PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10),"y":parseInt(destinazione[i].cy,10)});
 				PuntiRaccordo.push({"x":parseInt(sorgente[i].cx,10)+diametro_nodi,"y":parseInt(destinazione[i].cy,10)});
 
-				var puntiFreccia = ((parseInt(destinazione[i].cx)-diametro_nodi-10).toString())+","+((parseInt(destinazione[i].cy)-5).toString())+" "+
-								   ((parseInt(destinazione[i].cx)-diametro_nodi-10).toString())+","+((parseInt(destinazione[i].cy)+5).toString())+" "+
+				var puntiFreccia = ((parseInt(destinazione[i].cx)-diametro_nodi-x_freccia).toString())+","+((parseInt(destinazione[i].cy)-y_freccia).toString())+" "+
+								   ((parseInt(destinazione[i].cx)-diametro_nodi-x_freccia).toString())+","+((parseInt(destinazione[i].cy)+y_freccia).toString())+" "+
 								   ((parseInt(destinazione[i].cx)-diametro_nodi).toString())+","+((parseInt(destinazione[i].cy)).toString())+" ";
-				PolygonData.push({ "fill":  "black", "stroke": "black" ,"stroke-width":"0.5", "points": puntiFreccia})
+				PolygonData.push({ "fill":  "black", "stroke": "black" ,"stroke-width":dimensione_freccia, "points": puntiFreccia})
 				
 				//curve di raccordo
 				var lineFunction = d3.line()
@@ -306,7 +323,7 @@
 				var lineGraph = svgSelection.append("path")
 			                        .attr("d", lineFunction(PuntiRaccordo))
 			                        .attr("stroke", "black")
-			                        .attr("stroke-width", 0.5)
+			                        .attr("stroke-width", spessore_linea_raccordo)
 			                        .attr("fill", "none");
 				//svuoto array dei punti per la creazione delle curve di controllo
 				PuntiRaccordo.pop();
@@ -327,7 +344,9 @@
 	    						.attr("x2", function (d) { return d.x2; })
 	    						.attr("y2", function (d) { return d.y2; })
 	    						.attr("stroke-width", 0.5)
-								.attr("stroke", "black");
+								.attr("stroke", "black")
+								.attr("fill", "none");
+
 		
 		var Polygons = svgSelection.selectAll("polygon")
 									.data(PolygonData)
@@ -340,7 +359,7 @@
 		//add legend
 		svgSelection.append("circle").attr("cx",30).attr("cy",30).attr("r", 10).style("fill", "red")
 		svgSelection.append("circle").attr("cx",30).attr("cy",60).attr("r", 10).style("fill", "blue")
-		svgSelection.append("text").attr("x", 50).attr("y", 30).attr("font-weight",600).text("Piatti").style("font-size", "15px").attr("alignment-baseline","middle")
-		svgSelection.append("text").attr("x", 50).attr("y", 60)	.attr("font-weight",600).text("Ingredienti").style("font-size", "15px").attr("alignment-baseline","middle")
+		svgSelection.append("text").attr("x", 50).attr("y", 30).attr("font-weight",600).text("Piatti ("+selected_meals.length+")").style("font-size", "15px").attr("alignment-baseline","middle")
+		svgSelection.append("text").attr("x", 50).attr("y", 60)	.attr("font-weight",600).text("Ingredienti ("+ingredients.length+")").style("font-size", "15px").attr("alignment-baseline","middle")
 		
 	});
