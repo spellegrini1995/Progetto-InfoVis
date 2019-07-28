@@ -62,7 +62,7 @@ La versione di [d3.js](https://github.com/d3/d3) utilizzata per questo progetto 
 <p align="justify">
 <b>Matrice Degli Ingredienti</b>
 
-![alt text](img/Matrice_Degli_Ingredienti.png "Matrice Degli Ingredienti")
+![alt text](img/Matrice_Degli_Ingredienti_1.png "Matrice Degli Ingredienti")
 
 </p>
 
