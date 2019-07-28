@@ -58,9 +58,16 @@
 		var x_freccia = 5;
 		var y_freccia = 3;
 		var spessore_linea_raccordo = 0.4;
-		if(ingredients.length >= 20 && ingredients.length <=45){
+		var fill_punti_raccordo = "none";
+		var bundle = 0;
+		if(ingredients.length >= 25 && ingredients.length <39){
 			diametro_nodi=6;
 			x_freccia = 5;
+			y_freccia = 3;
+		} 
+		if(ingredients.length >= 39 && ingredients.length <= 45 ){
+			diametro_nodi=5;
+			x_freccia = 4;
 			y_freccia = 3;
 		} 
 		if(ingredients.length == 65 ){
@@ -224,13 +231,13 @@
 				var lineFunction = d3.line()
 			 							.x(function(d) { return d.x; })
 										.y(function(d) { return d.y; })
-										.curve(d3.curveBasis);
+										.curve(d3.curveBundle.beta(bundle));
 				//The line SVG Path we draw
 				var lineGraph = svgSelection.append("path")
 			                        .attr("d", lineFunction(PuntiRaccordo))
 			                        .attr("stroke", "black")
 			                        .attr("stroke-width", spessore_linea_raccordo)
-			                        .attr("fill", "black");
+			                        .attr("fill", fill_punti_raccordo);
 				//svuoto array dei punti per la creazione delle curve di controllo
 				PuntiRaccordo.pop();
 				PuntiRaccordo.pop();
@@ -256,13 +263,13 @@
 				var lineFunction = d3.line()
 			 							.x(function(d) { return d.x; })
 										.y(function(d) { return d.y; })
-										.curve(d3.curveBasis);
+										.curve(d3.curveBundle.beta(bundle));
 				//The line SVG Path we draw
 				var lineGraph = svgSelection.append("path")
 			                        .attr("d", lineFunction(PuntiRaccordo))
 			                        .attr("stroke", "black")
 			                        .attr("stroke-width", spessore_linea_raccordo)
-			                        .attr("fill", "black");
+			                        .attr("fill", fill_punti_raccordo);
 				//svuoto array dei punti per la creazione delle curve di controllo
 				PuntiRaccordo.pop();
 				PuntiRaccordo.pop();
@@ -285,13 +292,13 @@
 				var lineFunction = d3.line()
 			 							.x(function(d) { return d.x; })
 										.y(function(d) { return d.y; })
-										.curve(d3.curveBasis);
+										.curve(d3.curveBundle.beta(bundle));
 				//The line SVG Path we draw
 				var lineGraph = svgSelection.append("path")
 			                        .attr("d", lineFunction(PuntiRaccordo))
 			                        .attr("stroke", "black")
 			                        .attr("stroke-width", spessore_linea_raccordo)
-			                        .attr("fill", "black");
+			                        .attr("fill", fill_punti_raccordo);
 				//svuoto array dei punti per la creazione delle curve di controllo
 				PuntiRaccordo.pop();
 				PuntiRaccordo.pop();
@@ -314,14 +321,14 @@
 				var lineFunction = d3.line()
 			 							.x(function(d) { return d.x; })
 										.y(function(d) { return d.y; })
-										.curve(d3.curveBasis);
+										.curve(d3.curveBundle.beta(bundle));
 
 				//The line SVG Path we draw
 				var lineGraph = svgSelection.append("path")
 			                        .attr("d", lineFunction(PuntiRaccordo))
 			                        .attr("stroke", "black")
 			                        .attr("stroke-width", spessore_linea_raccordo)
-			                        .attr("fill", "black");
+			                        .attr("fill", fill_punti_raccordo);
 				//svuoto array dei punti per la creazione delle curve di controllo
 				PuntiRaccordo.pop();
 				PuntiRaccordo.pop();
