@@ -32,6 +32,30 @@
 			//	console.log(result);
 		}
 
+		function getIngredients(nome_piatto){
+			var ingredienti;
+			dataset.forEach(function(value, index) {
+				Object.keys(value).forEach(function(v, i) {
+					piatto = value[v];
+					//console.log(piatto);
+					if(piatto.name == nome_piatto ){
+						//console.log(piatto.ingredients);
+						ingredienti = piatto.ingredients;
+					}
+				})
+			})
+			return ingredienti;
+		}
+		function updateColorIngredient(ingredient,color){
+			for(var i=0; i<NodeData.length;i++){
+				var tmp = NodeData[i];
+				if(tmp.id==ingredient){
+					tmp.color = color;
+				}	
+			}
+		}
+
+
 
 
 		//prendo i dati dall'altra pagina html
@@ -161,9 +185,19 @@
 		.attr("class","circle")
 		.on('mouseover', function(d){                          
 			new_tooltip.select('.descr').html(d.id.bold());        
-			new_tooltip.style('display', 'block');                    
+			new_tooltip.style('display', 'block')
+			if(d.color =="red"){
+				var tmp = getIngredients(d.id);
+				for(var i=0; i<tmp.length; i++){
+						updateColorIngredient(tmp[i],"orange");
+						svgSelection.selectAll(".circle")
+						.style("fill",function (d) { return d.color; });
+				}
+			svgSelection.append("circle").attr("id","circle_selected").attr("cx",30).attr("cy",90).attr("r", 10).style("fill", "orange")
+			svgSelection.append("text").attr("id","text_selected").attr("x", 50).attr("y", 90).attr("font-weight",600).text("Ingredienti Selezionati ("+tmp.length+")").style("font-size", "15px").attr("alignment-baseline","middle")
+			}
 		})
-		.on('mouseout', function() {                     
+		.on('mouseout', function(d) {                     
 		new_tooltip.style('display', 'none'); 
 		})
 		.on('mousemove', function(d) { 
@@ -177,10 +211,20 @@
 	       .transition()
 		})
 		.on("mouseleave", function(d) {
-	    d3.select(this).transition()            
+			d3.select(this).transition()            
 	       .attr("d", d)
 	       .attr("stroke","none");
-		})
+			if(d.color =="red"){
+				var tmp = getIngredients(d.id);
+				for(var i=0; i<tmp.length; i++){
+						updateColorIngredient(tmp[i],"blue");
+						svgSelection.selectAll(".circle")
+						.style("fill",function (d) { return d.color; });
+				}
+			d3.select("#circle_selected").remove();
+			d3.select("#text_selected").remove();
+		}
+	    })
 
 	   	var circleAttributes = circles
 								.attr("id", function (d) { return d.id; })
@@ -365,7 +409,8 @@
 		svgSelection.append("circle").attr("cx",30).attr("cy",60).attr("r", 10).style("fill", "blue")
 		svgSelection.append("text").attr("x", 50).attr("y", 30).attr("font-weight",600).text("Piatti ("+selected_meals.length+")").style("font-size", "15px").attr("alignment-baseline","middle")
 		svgSelection.append("text").attr("x", 50).attr("y", 60)	.attr("font-weight",600).text("Ingredienti ("+ingredients.length+")").style("font-size", "15px").attr("alignment-baseline","middle")
-		
 		d3.selectAll("circle").raise();
 
-	});
+	})
+
+	;
